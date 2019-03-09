@@ -32,7 +32,7 @@ class Authorization {
   ///
   /// If not callbackURI passed, authentication becomes PIN-based.
   Future<AuthorizationResponse> requestTemporaryCredentials(
-      [String callbackURI]) async {
+      [String callbackURI, bool ignoreCallbackConfirmed]) async {
     callbackURI ??= 'oob';
     final Map<String, String> additionalParams = <String, String>{
       'oauth_callback': callbackURI
@@ -53,7 +53,7 @@ class Authorization {
     }
 
     final Map<String, String> params = Uri.splitQueryString(res.body);
-    if (params['oauth_callback_confirmed'].toLowerCase() != 'true') {
+    if (!ignoreCallbackConfirmed && params['oauth_callback_confirmed']?.toLowerCase() != 'true') {
       throw StateError('oauth_callback_confirmed must be true');
     }
 
